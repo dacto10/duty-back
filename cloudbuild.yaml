@@ -1,0 +1,52 @@
+steps:
+  - id: "install-and-build"
+    name: "node:22"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        npm install -g pnpm
+        pnpm install
+        pnpm run build
+
+  - id: "prepare-deployment-package"
+    name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        mkdir ./deployment_package
+        cp package.json ./deployment_package/
+        cp pnpm-lock.yaml ./deployment_package/
+        cp -R dist/* ./deployment_package/
+    waitFor: ["install-and-build"]
+
+  - id: "deploy-function"
+    name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud functions deploy ${_FUNC_NAME}-${_ENV} \
+          --gen2 \
+          --region=${_REGION} \
+          --source=./deployment_package \
+          --entry-point=${_ENTRY_POINT} \
+          --runtime=${_RUNTIME} \
+          --trigger-http \
+          --allow-unauthenticated \
+          --min-instances=1 \
+          --concurrency=1 \
+          --set-env-vars env=${_ENV} \
+          --set-build-env-vars GOOGLE_NODE_RUN_SCRIPTS=
+    waitFor: ["prepare-deployment-package"]
+
+substitutions:
+  _ENV: dev
+  _REGION: europe-west1
+  _FUNC_NAME: func
+  _RUNTIME: nodejs22
+  _ENTRY_POINT: index
+
+options:
+  logging: CLOUD_LOGGING_ONLY
