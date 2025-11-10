@@ -4,8 +4,8 @@
 	"private": true,
 	"scripts": {
 		"build": "tsc -p tsconfig.json",
-		"start": "node dist/index.js",
-		"dev": "ts-node-dev --respawn --transpile-only index.ts",
+		"start": "node dist/app/index.js",
+		"dev": "ts-node-dev --respawn --transpile-only api/index.ts",
 		"test": "jest --runInBand",
 		"test:watch": "jest --watch",
 		"lint": "eslint ."
