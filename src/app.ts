@@ -51,3 +51,7 @@ export class App {
 		return app;
 	}
 }
+
+const bootstrap = new App().init();
+
+export default bootstrap;
