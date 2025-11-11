@@ -324,15 +324,3 @@ Key points for Express on Vercel:
     *   `NODE_ENV` – `production`.
 
 ---
-
-## CI, Quality & Conventions
-
-*   **Linting**: `pnpm lint` (ESLint).
-*   **Types**: Strict TypeScript settings (`noImplicitAny`, `strictNullChecks`, etc.).
-*   **Conventions**:
-    *   1 entity = 1 router, controller, service, repository set.
-    *   Validate at the edges (Zod DTOs & params).
-    *   Controllers do no business logic; services handle orchestration.
-    *   Repositories encapsulate SQL and return typed objects.
-
----
